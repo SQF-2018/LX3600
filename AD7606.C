@@ -41,7 +41,7 @@ BUSY:PD8
 void AD7606_EXTI_Configuration(void)
 {
  EXTI_InitTypeDef EXTI_InitStructure; 
- GPIO_EXTILineConfig(GPIO_PortSourceGPIOD, GPIO_PinSource8);//PD8为外部中断输入引脚 
+ //GPIO_EXTILineConfig(GPIO_PortSourceGPIOD, GPIO_PinSource8);//PD8为外部中断输入引脚 
  EXTI_InitStructure.EXTI_Line    = EXTI_Line8;          //开启外部中断线8
  EXTI_InitStructure.EXTI_Mode    = EXTI_Mode_Interrupt; //设置为中断模式 
  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;//设置为下降沿中断
