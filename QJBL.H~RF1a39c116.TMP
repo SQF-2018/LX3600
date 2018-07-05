@@ -1,0 +1,308 @@
+#ifndef __QJBL_H
+#define __QJBL_H
+
+#include "FFT_MATH.H"
+#include "MACRO_DEFINITION.H"
+#include "STRUCTURE_DEFINITION.H"
+
+/*************************************************************************************************/
+//存储器存储变量声明
+/*************************************************************************************************/
+extern unsigned char  DEVICE_NUMBER[4];  //装置编号
+extern unsigned char  TEST_RECORD_NUMBER;//最新测量记录编号
+extern unsigned char  TEST_RECORD_AMOUNT;//已经保存的测量记录的总个数
+
+/*************************************************************************************************/
+//常用通用程序部分声明
+/*************************************************************************************************/
+extern BCD_TIME NOW_TIME;                    //时间结果体
+extern unsigned char  RELAY_DETECT_EN;       //继电器测试使能标志
+extern unsigned char  RELAY_DETECT;          //继电器测试控制寄存器
+extern unsigned char  RELAY_CTRL;            //继电器控制寄存器
+extern unsigned char  HARDWARE_EEOR_FLAG;    //硬件错误标志
+extern float          RTC_CORRECT_COE;       //RTC时钟校正系数
+extern unsigned char  POWERON_TIME_COUNT;    //开机上电时间计时
+extern unsigned char  U_DISK_CONNECT;        //U盘插入标志
+extern unsigned char  U_DISK_MOUNT;          //U盘初始化标志
+extern unsigned char  U_DISK_MOUNT_TIME;     //U盘初始化延时计时
+extern unsigned char  PRINTER_CONNECT;       //打印机连接标志
+extern unsigned char  PRINTING_FLAG;         //当前正在打印标志
+extern unsigned char  OPERATION_PROCESS;     //操作过程标志
+extern unsigned char  RECORD_STORAGED_INTER; //测量结果记录已保存至本机标志
+extern unsigned char  BLUETOOTH_MODLE_INIT;  //蓝牙模块初始化标志
+extern unsigned char  BLUETOOTH_CONNECT;     //蓝牙连接标志
+extern unsigned short HARDWARE_WORK_STATE;   //硬件工作状态
+extern unsigned char  WRITE_DEVICE_NUMBER_EN;//允许写装置编号标志,ON:允许;OFF:禁止
+extern unsigned short LOW_BAT_ALARM_TIME;    //电池电量低报警延时计时器
+extern unsigned char  OPERATE_STATE;              //操作状态标志,主要用于系统参数设置等屏幕
+extern float          EXAMPLE_IMPEDANCE;     //量程校准时使用的标准电阻值
+extern float          EXAMPLE_VOLTAGE;       //量程校准时各个档位所需的标准电压
+extern float          EXAMPLE_CURRENT;       //量程校准时各个档位所需的标准电流
+extern float          EXAMPLE_IMPEDANCE_MIN; //允许设置的额定阻抗最小值
+extern float          EXAMPLE_IMPEDANCE_MAX; //允许设置的额定阻抗最大值
+extern float          EXAMPLE_VOLTAGE_MIN;   //允许设置的设置电压最小值
+extern float          EXAMPLE_VOLTAGE_MAX;   //允许设置的设置电压最大值
+extern unsigned char  CALIBRATION_DATA_NO;   //量程校准时采样数据的编号
+extern float          MEASURED_PHASE_DIFF;   //量程校准过程实测的相角差
+extern float          ORIGINAL_PHASE_DIFF;   //量程校准过程原始相角差
+extern float          MEASURED_IMPEDANCE;    //量程校准过程实测的阻抗值
+extern unsigned char  CALI_PROCESS_EN;       //使能禁止量程校准过程控制标志
+extern unsigned char  CALI_PROCESS_FLAG;     //量程校准过程控制标志
+extern unsigned short CALI_PROCESS_TIME;     //量程校准过程中每个阶段延时计时，单位：10ms
+extern unsigned char  AWD_THRESHOLD_CROSS_COUNT;  //模拟看门狗超阀值次数计数标志
+extern unsigned char  AWD_THRESHOLD_CROSS_TIME;   //模拟看门狗超阀值计时
+extern unsigned char  AWD_THRESHOLD_CROSS_TIME_EN;//模拟看门狗超阀值允许计时标志
+extern unsigned char  OV_50HZ_RECOVERY_TIME_EN;   //50HZ零序电压从过压状态到正常状态的恢复等待时间使能标志
+extern unsigned char  OV_50HZ_RECOVERY_TIME;      //50HZ零序电压从过压状态到正常状态的恢复等待时间，单位：0.5秒
+extern unsigned short CURRENT_CTRL_TIME;          //测量时，电流调节所用时间计时
+
+/*******************************************************************************************************************************
+ADC采样部分变量
+*******************************************************************************************************************************/
+extern unsigned char  ADC12_DONE;                       //内部ADC一周波采样完成标志
+extern unsigned char  AD7606_DONE;                      //外置AD7606一周波采样完成标志
+extern unsigned short AD7606_POINT;                     //外置AD7606采样点数计数器
+extern unsigned short AD12_DATA_BUF[ADC12_SAMPLE_POINT];//内部ADC输出数据缓冲区
+extern signed short   AD7606_DATA_BUF[2][FFT_POINT];    //AD7606输出数据缓冲区
+extern unsigned char  AD7606_OS_RAT;                    //AD7606过采样倍率
+extern unsigned short FFT_BASE_FREQENCY;                //FFT运算分析的基波频率
+extern float RFFT_IN_BUF[FFT_POINT];                    //RFFT运算数据输入缓冲区
+extern float RFFT_OUT_BUF[FFT_POINT];                   //RFFT运算数据输出缓冲区
+extern ANALOG_VALUE_STRUCT ANALOG_DATA;                 //模拟量计算结果结构变量
+extern unsigned char  VOLTAGE_GAIN_GEAR; //电压通道增益档位
+extern unsigned char  CURRENT_GAIN_GEAR; //电流通道增益档位
+extern unsigned char  JDQ_FY_ACTION_FLAG;//分压电阻动作标志
+extern unsigned short JDQ_FY_ACTION_TIME;//分压电阻动作计时器
+extern unsigned char  AD_GAIN_SWITCHING; //模拟量增益切换动作标志
+extern unsigned char  FFT_DATA_READABLE; //经FFT运算的数据有效并可以被读取，读取后手动置此标志为OFF
+
+/*******************************************************************************************************************************
+测试结果及测试参数设置变量
+*******************************************************************************************************************************/
+extern TEST_DATA_STRUCT TEST_DATA;//测试结果及测试参数设置结构体
+
+/*******************************************************************************************************************************
+校准系数结构体
+*******************************************************************************************************************************/
+extern COE_DATA_STRUCT COE_DATA;//校准系数结构体
+
+/*******************************************************************************************************************************
+液晶显示部分变量
+*******************************************************************************************************************************/
+extern unsigned short LCD_FORE_COLOR;//定义显示的前景色，便于统一管理
+extern unsigned short LCD_BACK_COLOR;//定义显示的背景色，便于统一管理
+extern unsigned char  LCD_BRIGHTNESS;//液晶屏背光亮度值
+extern unsigned char  SCRFL;         //屏幕编号
+extern unsigned char  POPUP_SCRFL;   //弹出屏幕编号
+extern unsigned char  BURST_SCRFL;   //突发弹出屏幕编号
+extern unsigned char  SCRAPPLY;      //允许全屏刷新标志
+extern unsigned char  DUPDATE;       //允许数据刷新标志
+extern unsigned char  CDX1;          //第一级菜单光标位置
+extern unsigned char  CDX2;          //第二级菜单光标位置 
+extern unsigned char  CDX3;          //第三级菜单光标位置
+extern unsigned char  CDX4;          //第四级菜单光标位置
+extern unsigned char  POPUP_CDX;     //弹出菜单光标位置
+extern unsigned char  DISPLAY_PT_WIRING_DIAGRAM;//显示PT接线图使能控制标志
+extern unsigned char  PARAMETER_DISPLAY_EN;     //测量过程详细参数显示控制标志
+
+/*-----------------------------------------------------------------------------------------------*/
+//按键部分处理变量
+/*-----------------------------------------------------------------------------------------------*/
+extern unsigned char  KEY1;            //第一次按键采样值
+extern unsigned char  KEY2;            //第二次按键采样值
+extern unsigned char  YESKEY;          //确定的按键键值
+extern unsigned short KEYTIME;         //一个按键持续按下的时间
+extern unsigned short DKEYTIME;        //无按键按下持续时间
+//各个屏幕按键处理临时变量
+extern unsigned char  KEY_CHAR_TMP[25];//定义屏幕按键处理用char型临时变量
+extern unsigned short KEY_SHORT_TMP[5];//定义屏幕按键处理用short型临时变量
+#define RATED_VOLTAGE_KEY1     KEY_CHAR_TMP[0]//电容电流测量参数设置屏幕额定高压设置按键临时变量
+#define RATED_VOLTAGE_KEY2     KEY_CHAR_TMP[1]
+#define RATED_VOLTAGE_KEY3     KEY_CHAR_TMP[2]
+#define PHASE_A_CAP_KEY1       KEY_CHAR_TMP[3]//电容电流测量参数设置屏幕电容器组A相容量设置按键临时变量
+#define PHASE_A_CAP_KEY2       KEY_CHAR_TMP[4]
+#define PHASE_A_CAP_KEY3       KEY_CHAR_TMP[5]
+#define PHASE_A_CAP_KEY4       KEY_CHAR_TMP[6]
+#define PHASE_A_CAP_KEY5       KEY_CHAR_TMP[7]
+#define PHASE_A_CAP_KEY6       KEY_CHAR_TMP[8]
+#define PHASE_B_CAP_KEY1       KEY_CHAR_TMP[9]//电容电流测量参数设置屏幕电容器组B相容量设置按键临时变量
+#define PHASE_B_CAP_KEY2       KEY_CHAR_TMP[10]
+#define PHASE_B_CAP_KEY3       KEY_CHAR_TMP[11]
+#define PHASE_B_CAP_KEY4       KEY_CHAR_TMP[12]
+#define PHASE_B_CAP_KEY5       KEY_CHAR_TMP[13]
+#define PHASE_B_CAP_KEY6       KEY_CHAR_TMP[14]
+#define PHASE_C_CAP_KEY1       KEY_CHAR_TMP[15]//电容电流测量参数设置屏幕电容器组C相容量设置按键临时变量
+#define PHASE_C_CAP_KEY2       KEY_CHAR_TMP[16]
+#define PHASE_C_CAP_KEY3       KEY_CHAR_TMP[17]
+#define PHASE_C_CAP_KEY4       KEY_CHAR_TMP[18]
+#define PHASE_C_CAP_KEY5       KEY_CHAR_TMP[19]
+#define PHASE_C_CAP_KEY6       KEY_CHAR_TMP[20]       
+#define YEAR_KEY               KEY_CHAR_TMP[0]//实时时钟设置屏幕按键临时变量
+#define MONTH_KEY              KEY_CHAR_TMP[1]
+#define DATE_KEY               KEY_CHAR_TMP[2]
+#define WEEKDAY_KEY            KEY_CHAR_TMP[3]
+#define HOUR_KEY               KEY_CHAR_TMP[4]
+#define MINUTE_KEY             KEY_CHAR_TMP[5]
+#define SECOND_KEY             KEY_CHAR_TMP[6]
+#define TEST_RECORD_NUMBER_KEY KEY_CHAR_TMP[0]//读取测量记录编号按键临时变量
+#define MIMA0                  KEY_CHAR_TMP[0]//密码输入宏替换
+#define MIMA1                  KEY_CHAR_TMP[1]
+#define MIMA2                  KEY_CHAR_TMP[2]
+#define MIMA3                  KEY_CHAR_TMP[3]
+#define MIMA4                  KEY_CHAR_TMP[4]
+#define MIMA5                  KEY_CHAR_TMP[5]
+#define CAL_VBAT_KEY           KEY_CHAR_TMP[0] //电池校准屏幕按键临时变量
+#define CAL_VRMS_50HZ_KEY      KEY_CHAR_TMP[0] //零序电压校准屏幕按键临时变量
+#define GAIN_GEAR_KEY          KEY_CHAR_TMP[0] //量程校准屏幕增益档位控制按键临时变量
+#define EXAMPLE_IMPEDANCE_KEY  KEY_CHAR_TMP[1] //量程校准屏幕额定阻抗校正按键临时变量
+#define EXAMPLE_VOLTAGE_KEY    KEY_CHAR_TMP[10]//量程校准屏幕设置电压校正按键临时变量
+#define MODIFY_STATUS_KEY      KEY_CHAR_TMP[24]//参数修改状态输入按键宏替换
+#define POWER_OUT_FREQENCY_KEY KEY_SHORT_TMP[0]//逆变调试屏幕电源输出频率按键临时变量
+#define POWER_OUT_MDLT_RAT_KEY KEY_SHORT_TMP[1]//逆变调试屏幕电源输出调制度按键临时变量
+#define RECOVERY_KEY           KEY_CHAR_TMP[0]//恢复出厂设置控制位输入按键宏替换
+#define TESTING_SET_BIT  0 //测试参数设置控制位
+#define BAT_COE_BIT      1 //电池电压系数控制位
+#define U03_COE_BIT      2 //零序3U0电压系数控制位
+#define RAN_COE_BIT      3 //量程档位参数校准系数控制位
+#define ALL_BIT          0xff
+
+/*************************************************************************************************/
+//测量过程控制部分变量声明
+/*************************************************************************************************/
+extern unsigned char  TEST_PROCESS_EN;  //使能禁止测量过程标志
+extern unsigned char  TEST_PROCESS_FLAG;//测量过程控制标志
+extern unsigned short TEST_PROCESS_TIME;//测量过程中每个阶段延时计时，单位：10ms
+
+/*************************************************************************************************/
+//变频器部分变量
+/*************************************************************************************************/
+/*-----------------------------------------------------------------------------------------------*/
+//逆变电源控制部分变量
+/*-----------------------------------------------------------------------------------------------*/
+extern unsigned short POWER_OUT_FREQENCY;   //变频电源输出频率
+extern float          POWER_OUT_VOLTAGE_TGT;//变频电源输出目标电压
+extern float          POWER_OUT_CURRENT_TGT;//变频电源输出目标电流
+extern float          POWER_OUT_POWER;      //变频电源当前输出功率
+extern unsigned char  SP_MODBUS_RXDATA_FLAG;//发送数据后，接收到正确数据标志
+extern unsigned char  SP_MODBUS_COMMAND;    //与变频逆变电源通讯命令码
+extern unsigned short SP_MODBUS_START_ADD;  //指定通讯时访问的数据单元地址
+extern unsigned char  SP_MODBUS_DATA_NUMBER;//指定通讯时要访问的数据单元个数
+extern unsigned short SPWMPOWER_DATA[6];    //变频逆变电源通讯数据表
+extern unsigned short SP_MODBUS_ERR;        //变频逆变电源通讯错误代码
+
+/*-----------------------------------------------------------------------------------------------*/
+//变频逆变电源串口通讯（USART1）部分变量
+/*-----------------------------------------------------------------------------------------------*/
+extern unsigned char SPWMPOWER_RXBUF[20]; //异步串行通讯接收缓冲区
+extern unsigned char SPWMPOWER_TXBUF[20]; //异步串行通讯发送缓冲区
+extern unsigned char SPWMPOWER_RXNO;      //通讯接收到的字节数目
+extern unsigned char SPWMPOWER_TXNO;      //通讯发送数据指针
+extern unsigned char SPWMPOWER_TXEND;     //通讯要发送的数据总个数
+extern unsigned char SPWMPOWER_RXTIME;    //通讯接收到最后一个字节后的静止时间
+extern unsigned char SPWMPOWER_RXTIME_EN; //允许通讯接收静止时间计时标志
+extern unsigned char SPWMPOWER_RXTIME_END;//通讯接收静止时间到时标志
+
+/*************************************************************************************************/
+//蓝牙转串口通讯（UART5）部分变量
+/*************************************************************************************************/
+extern unsigned char BLUETOOTH_RXBUF[50]; //异步串行通讯接收缓冲区
+extern unsigned char BLUETOOTH_TXBUF[70]; //异步串行通讯发送缓冲区
+extern unsigned char BLUETOOTH_RXNO;      //通讯接收到的字节数目
+extern unsigned char BLUETOOTH_TXNO;      //通讯发送数据指针
+extern unsigned char BLUETOOTH_TXEND;     //通讯要发送的数据总个数
+extern unsigned char BLUETOOTH_RXTIME;    //通讯接收到最后一个字节后的静止时间
+extern unsigned char BLUETOOTH_RXTIME_EN; //允许通讯接收静止时间计时标志
+extern unsigned char BLUETOOTH_RXTIME_END;//通讯接收静止时间到时标志
+
+/*************************************************************************************************/
+//定时用变量
+/*************************************************************************************************/
+extern unsigned char HALF_SECOND_SIG;    //半秒钟定时器到时标志
+extern unsigned char HUNDRED_MSECOND_SIG;//一百毫秒定时器到时标志
+extern unsigned char KAIJI_TIME;         //开机界面显示计时器
+extern unsigned char SLOW_SHAN_SIG;      //慢闪烁标志，定时半秒钟
+extern unsigned char FAST_SHAN_SIG;      //快闪烁标志，定时100ms
+
+/*************************************************************************************************/
+//软件延时函数
+//50  延时4.52us
+//100 延时8.68us
+//200 延时17us
+//500 延时42us
+//1000延时83.8us
+/*************************************************************************************************/
+extern void Delay(unsigned int count);
+/*************************************************************************************************/
+//毫秒软件延时函数
+/*************************************************************************************************/
+extern void Delay_ms(unsigned int ms);
+/*************************************************************************************************/
+// Name: hex_to_bcd
+// Description: 十六进制数转换成BDC码格式
+// Calls: None
+// Input: 需要转换的十六进制数
+// Outputs: 转换后的BCD码
+/*************************************************************************************************/
+extern unsigned short Hex_To_Bcd(unsigned short data);
+/*************************************************************************************************/
+//Name: bcd_to_hex
+//Description: BCD码格式转换成十六进制数
+//Calls: None
+//Input: 需要转换的BCD码
+//Outputs: 转换后的十六进制数
+/*************************************************************************************************/
+extern unsigned short Bcd_To_Hex(unsigned short data);
+
+/*************************************************************************************************/
+#define Set_Bit(val, bitn)    (val |=(1<<(bitn)))
+#define Clr_Bit(val, bitn)    (val&=~(1<<(bitn)))
+#define Get_Bit(val, bitn)    (val &(1<<(bitn)) )
+
+/*************************************************************************************************/
+//计算CRC16程序
+/*************************************************************************************************/
+extern unsigned short int CRC16(unsigned char *puchMsg, unsigned short int usDataLen);
+
+/*************************************************************************************************/
+//报警蜂鸣器控制处理程序
+/*************************************************************************************************/
+extern void Alarm_BEEP(void);
+
+/*************************************************************************************************/
+//继电器控制程序
+/*************************************************************************************************/
+extern void Relay_Control(void);
+
+/*******************************************************************************************************************************
+整形数据N次方计算函数(源自SGI STL算法库)
+*******************************************************************************************************************************/
+extern int Int_Power(int x, unsigned int n);
+
+/*******************************************************************************************************************************
+浮点数转换成字符型数组函数 
+参数  data_f   :要转换的浮点数
+      *data_i  :接收转换数据的字符型数组
+      symbol_en:是否显示符号位,0:不显示,非0:显示符号位
+      length   :要转换的长度,包括小数和符号位在内的长度
+*******************************************************************************************************************************/
+extern void Float_To_Char(float data_f,unsigned char *data_i,unsigned char symbol_en,unsigned char length);
+
+/*******************************************************************************************************************************
+浮点数转换成固定小数长度字符型数组函数 
+参数  data_f   :要转换的浮点数
+      *data_i  :接收转换数据的字符型数组
+      symbol_en:是否显示符号位,0:不显示,非0:显示符号位
+      length   :要转换的长度,包括小数和符号位在内的长度,最大长度10位(小数点1位,符号位1位,有效数字7位,小于0的数小数点前的0占一位)
+      dot      :需要的小数长度
+*******************************************************************************************************************************/
+extern void Float_To_Fixed_Char(float data_f,unsigned char *data_i,unsigned char symbol_en,unsigned char length,unsigned char dot);  
+
+/*******************************************************************************************************************************
+字符型数组转换成浮点数函数 
+参数：data      要转换的字符串指针
+      length    要转换的字符个数
+例：data[6]={'1','2','3','.','4','5'},转换完成后=123.45
+*******************************************************************************************************************************/
+extern float Char_To_Float(unsigned char *data,unsigned char length);
+
+#endif
